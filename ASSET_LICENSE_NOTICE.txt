@@ -1,0 +1,23 @@
+MoonBase Colony v3 — asset notice
+=================================
+
+All building, terrain, robot, rocket and UI artwork in v3 is PROCEDURAL:
+it is drawn in code at start-up (src/game/art/*.ts) by the MoonBase Colony
+project. No third-party image or 3D-model files are shipped in this package.
+
+Earlier versions (v1/v2) included 2D sprites rendered from the
+"Low Poly Space Colony Pack" by reodesuxz. Those sprites have been removed
+from v3. If you add them back, their license applies:
+
+  Low Poly Space Colony Pack — Copyright (c) 2026 reodesuxz
+  Permitted: use in personal and commercial projects; modification.
+  Not permitted: reselling, sublicensing or redistributing the asset files
+  (modified or not) as standalone assets or as part of another asset pack;
+  using the assets to train or fine-tune AI models.
+  Credit appreciated: "Low Poly Space Colony Pack by reodesuxz".
+
+Fonts: "Baloo 2" and "Inter" are loaded from Google Fonts (SIL Open Font
+License). If offline, the game falls back to system fonts.
+
+Libraries (see package.json): Phaser 3 (MIT), React (MIT), Vite (MIT),
+Tailwind CSS (MIT), Vitest (MIT), TypeScript (Apache-2.0).

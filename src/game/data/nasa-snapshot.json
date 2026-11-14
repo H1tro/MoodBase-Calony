@@ -1,0 +1,555 @@
+{
+ "retrieved": "2026-11-14T16:34:42.858Z",
+ "ntrs": {
+  "dust": {
+   "query": "lunar dust mitigation solar array",
+   "results": [
+    {
+     "id": "20210020840",
+     "title": "ACO Dust Mitigation for Flexible Solar Arrays (DMFlex)",
+     "type": "Presentation",
+     "date": "2021-09-15",
+     "center": "Glenn Research Center",
+     "url": "https://ntrs.nasa.gov/citations/20210020840"
+    },
+    {
+     "id": "20220013150",
+     "title": "Dust Mitigation for Flexible Solar Arrays (DMFlex) ",
+     "type": "Poster",
+     "date": "2022-09-12",
+     "center": "Glenn Research Center",
+     "url": "https://ntrs.nasa.gov/citations/20220013150"
+    },
+    {
+     "id": "20205006575",
+     "title": "An Overview of LO-DuSST (Lunar Occupancy Dust Surface Separation Technologies) Objectives",
+     "type": "Conference Paper",
+     "date": "2021-02-28",
+     "center": "Langley Research Center",
+     "url": "https://ntrs.nasa.gov/citations/20205006575"
+    },
+    {
+     "id": "20230004439",
+     "title": "The Dust Problem: Mitigation Methods for Flexible Solar Arrays under Lunar Conditions",
+     "type": "Presentation",
+     "date": "2023-04-25",
+     "center": "Glenn Research Center",
+     "url": "https://ntrs.nasa.gov/citations/20230004439"
+    }
+   ]
+  },
+  "radiation": {
+   "query": "lunar regolith radiation shielding",
+   "results": [
+    {
+     "id": "20110012713",
+     "title": "Radiation Shielding of Lunar Regolith/Polyethylene Composites and Lunar Regolith/Water Mixtures",
+     "type": "Abstract",
+     "date": "2019-07-17",
+     "center": "Johnson Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20110012713"
+    },
+    {
+     "id": "20240003289",
+     "title": "Tribological and Radiation Shielding Response of Novel Titanium-Boron Nitride Coatings for Lunar Structural Components",
+     "type": "Reprint (Version printed in journal)",
+     "date": "2024-03-22",
+     "center": "Marshall Space Flight Center",
+     "url": "https://ntrs.nasa.gov/citations/20240003289"
+    },
+    {
+     "id": "20240011143",
+     "title": "Wear and Neutron Shielding Resilience of Titanium-Hexagonal Boron Nitride Coatings Against Extreme Lunar Radiation and Thermal Cycles",
+     "type": "Reprint (Version printed in journal)",
+     "date": "2024-09-06",
+     "center": "Marshall Space Flight Center",
+     "url": "https://ntrs.nasa.gov/citations/20240011143"
+    },
+    {
+     "id": "19910048753",
+     "title": "Martian regolith as space radiation shielding",
+     "type": "Reprint (Version printed in journal)",
+     "date": "2011-08-18",
+     "center": "Legacy CDMS",
+     "url": "https://ntrs.nasa.gov/citations/19910048753"
+    }
+   ]
+  },
+  "storm": {
+   "query": "solar particle event lunar surface crew",
+   "results": [
+    {
+     "id": "20220018235",
+     "title": "A Compact Electron-Proton Spectrometer for Moon / Mars Surface Space Weather Monitoring and Crew Protection (CEPS) ",
+     "type": "Abstract",
+     "date": "2022-12-15",
+     "center": "Johnson Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20220018235"
+    },
+    {
+     "id": "20230015226",
+     "title": "CEPS – A Compact Electron-Proton Spectrometer",
+     "type": "Poster",
+     "date": "2023-12-08",
+     "center": "Johnson Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20230015226"
+    },
+    {
+     "id": "20140016937",
+     "title": "Human Exploration of Phobos",
+     "type": "Conference Paper",
+     "date": "2019-07-12",
+     "center": "Johnson Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20140016937"
+    },
+    {
+     "id": "20100030502",
+     "title": "Meeting Radiation Protection Requirements and Reducing Spacecraft Mass - A Multifunctional Materials Approach",
+     "type": "Conference Paper",
+     "date": "2019-07-12",
+     "center": "Johnson Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20100030502"
+    }
+   ]
+  },
+  "power": {
+   "query": "lunar night power fission surface power",
+   "results": [
+    {
+     "id": "20220015225",
+     "title": "NASA's Fission Surface Power Project",
+     "type": "Presentation",
+     "date": "2022-10-27",
+     "center": "Glenn Research Center",
+     "url": "https://ntrs.nasa.gov/citations/20220015225"
+    },
+    {
+     "id": "20220016561",
+     "title": "Fission Surface Power (FSP) Project Overview",
+     "type": "Presentation",
+     "date": "2022-11-17",
+     "center": "Glenn Research Center",
+     "url": "https://ntrs.nasa.gov/citations/20220016561"
+    },
+    {
+     "id": "20090018069",
+     "title": "Fission Surface Power Technology Development Status",
+     "type": "Technical Memorandum (TM)",
+     "date": "2019-07-12",
+     "center": "Glenn Research Center",
+     "url": "https://ntrs.nasa.gov/citations/20090018069"
+    },
+    {
+     "id": "20160010550",
+     "title": "Solar Versus Fission Surface Power for Mars",
+     "type": "Conference Paper",
+     "date": "2019-07-11",
+     "center": "Johnson Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20160010550"
+    }
+   ]
+  },
+  "oxygen": {
+   "query": "oxygen extraction lunar regolith",
+   "results": [
+    {
+     "id": "20150022136",
+     "title": "RESOLVE - Regolith and Environment Science and Oxygen and Lunar Volatile Extraction",
+     "type": "Other - Brief Communication/Note",
+     "date": "2019-07-11",
+     "center": "Kennedy Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20150022136"
+    },
+    {
+     "id": "20110014554",
+     "title": "RESOLVE: Regolith and Environment Science and Oxygen and Lunar Volatile Extraction",
+     "type": "Presentation",
+     "date": "2019-07-11",
+     "center": "Kennedy Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20110014554"
+    },
+    {
+     "id": "20205002032",
+     "title": "State-of-the-art and Systems Analysis of Emerging Technologies for Oxygen and Metals Extraction\nfrom Lunar Regolith",
+     "type": "Conference Paper",
+     "date": "2020-11-16",
+     "center": "Kennedy Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20205002032"
+    },
+    {
+     "id": "20100002191",
+     "title": "Lunar Oxygen Production and Metals Extraction Using Ionic Liquids",
+     "type": "Conference Paper",
+     "date": "2019-07-12",
+     "center": "Marshall Space Flight Center",
+     "url": "https://ntrs.nasa.gov/citations/20100002191"
+    }
+   ]
+  },
+  "co2": {
+   "query": "carbon dioxide removal spacecraft cabin",
+   "results": [
+    {
+     "id": "19680061625",
+     "title": "Carbon dioxide control for manned spacecraft.",
+     "type": "Reprint (Version printed in journal)",
+     "date": "2011-08-11",
+     "center": "Legacy CDMS",
+     "url": "https://ntrs.nasa.gov/citations/19680061625"
+    },
+    {
+     "id": "20200003005",
+     "title": "The Integrated Carbon Dioxide Removal, Compression, andStorage (CRCS) System",
+     "type": "Conference Paper",
+     "date": "2020-05-29",
+     "center": "Ames Research Center",
+     "url": "https://ntrs.nasa.gov/citations/20200003005"
+    },
+    {
+     "id": "20250001226",
+     "title": "Carbon Dioxide Removal by Ionic Liquid System for Mobility (CDRILS-M) for Mars Exploration Extravehicular Mobility Unit (mxEMU)",
+     "type": "Conference Paper",
+     "date": "2025-07-14",
+     "center": "Johnson Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20250001226"
+    },
+    {
+     "id": "20050210002",
+     "title": "International Space Station Carbon Dioxide Removal Assembly (ISS CDRA) Concepts and Advancements",
+     "type": "Preprint (Draft being sent to journal)",
+     "date": "2019-07-12",
+     "center": "Marshall Space Flight Center",
+     "url": "https://ntrs.nasa.gov/citations/20050210002"
+    }
+   ]
+  },
+  "water": {
+   "query": "water recovery system International Space Station",
+   "results": [
+    {
+     "id": "20170008948",
+     "title": "Upgrades to the International Space Station Water Recovery System",
+     "type": "Conference Paper",
+     "date": "2019-07-12",
+     "center": "Marshall Space Flight Center",
+     "url": "https://ntrs.nasa.gov/citations/20170008948"
+    },
+    {
+     "id": "19950066496",
+     "title": "International Space Station environmental control and life support system. Phase 3: Water Recovery Test Stage 9",
+     "type": "Technical Memorandum (TM)",
+     "date": "1996-01-23",
+     "center": "Marshall Space Flight Center",
+     "url": "https://ntrs.nasa.gov/citations/19950066496"
+    },
+    {
+     "id": "20050207456",
+     "title": "Status of the International Space Station Regenerative ECLSS Water Recovery and Oxygen Generation Systems",
+     "type": "Preprint (Draft being sent to journal)",
+     "date": "2019-07-12",
+     "center": "Marshall Space Flight Center",
+     "url": "https://ntrs.nasa.gov/citations/20050207456"
+    },
+    {
+     "id": "20090007768",
+     "title": "Status of the Regenerative ECLSS Water Recovery System",
+     "type": "Conference Paper",
+     "date": "2019-07-12",
+     "center": "Marshall Space Flight Center",
+     "url": "https://ntrs.nasa.gov/citations/20090007768"
+    }
+   ]
+  },
+  "temperature": {
+   "query": "lunar surface thermal environment",
+   "results": [
+    {
+     "id": "20220015943",
+     "title": "NASA MSFC Lunar Surface Simulator (LSS): A Facility for Lunar Relevant Environment Testing",
+     "type": "Poster",
+     "date": "2022-11-02",
+     "center": "Marshall Space Flight Center",
+     "url": "https://ntrs.nasa.gov/citations/20220015943"
+    },
+    {
+     "id": "20260004031",
+     "title": "Simulating the Lunar Thermal Environment for the Surface-Deployed LEMS Artemis III TVAC Test",
+     "type": "Conference Paper",
+     "date": "2026-07-13",
+     "center": "Goddard Space Flight Center",
+     "url": "https://ntrs.nasa.gov/citations/20260004031"
+    },
+    {
+     "id": "20260001865",
+     "title": "Simulating the Lunar Thermal Environment for the Surface-Deployed LEMS Artemis III TVAC Test",
+     "type": "Conference Paper",
+     "date": "2026-07-15",
+     "center": "Goddard Space Flight Center",
+     "url": "https://ntrs.nasa.gov/citations/20260001865"
+    },
+    {
+     "id": "20260005985",
+     "title": "Simulating the Lunar Thermal Environment for the Surface-Deployed LEMS Artemis III TVAC Test",
+     "type": "Presentation",
+     "date": "2026-07-13",
+     "center": "Goddard Space Flight Center",
+     "url": "https://ntrs.nasa.gov/citations/20260005985"
+    }
+   ]
+  },
+  "impacts": {
+   "query": "micrometeoroid lunar surface",
+   "results": [
+    {
+     "id": "19710033086",
+     "title": "Lunar surface - Changes in 31 months and micrometeoroid flux",
+     "type": "Reprint (Version printed in journal)",
+     "date": "2011-08-12",
+     "center": "Legacy CDMS",
+     "url": "https://ntrs.nasa.gov/citations/19710033086"
+    },
+    {
+     "id": "19750006607",
+     "title": "The micrometeoroid complex and evolution of the lunar regolith",
+     "type": "Conference Paper",
+     "date": "2019-07-12",
+     "center": "Legacy CDMS",
+     "url": "https://ntrs.nasa.gov/citations/19750006607"
+    },
+    {
+     "id": "19720019099",
+     "title": "Primary and Secondary Micrometeoroid Impact Rate on the Lunar Surface: A Direct Measurement",
+     "type": "Other",
+     "date": "1995-11-22",
+     "center": "Legacy CDMS",
+     "url": "https://ntrs.nasa.gov/citations/19720019099"
+    },
+    {
+     "id": "20090021286",
+     "title": "An Impact Sensor System for the Characterization of the Micrometeoroid and Lunar Secondary Ejecta Environment",
+     "type": "Conference Paper",
+     "date": "2019-07-12",
+     "center": "Johnson Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20090021286"
+    }
+   ]
+  },
+  "food": {
+   "query": "plant growth space crop production",
+   "results": [
+    {
+     "id": "20230015971",
+     "title": "Plants in Space and Space Crop Production",
+     "type": "Presentation",
+     "date": "2023-11-29",
+     "center": "Kennedy Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20230015971"
+    },
+    {
+     "id": "20230013771",
+     "title": "Plants in Space and Space Crop Production",
+     "type": "Presentation",
+     "date": "2023-09-27",
+     "center": "Kennedy Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20230013771"
+    },
+    {
+     "id": "20240002669",
+     "title": "Space Crop Production Gaps and Challenges",
+     "type": "Conference Paper",
+     "date": "2024-09-07",
+     "center": "Kennedy Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20240002669"
+    },
+    {
+     "id": "20210000035",
+     "title": "Space Crop Production",
+     "type": "Abstract",
+     "date": "2021-01-11",
+     "center": "Kennedy Space Center",
+     "url": "https://ntrs.nasa.gov/citations/20210000035"
+    }
+   ]
+  }
+ },
+ "donki": {
+  "flares": [
+   {
+    "id": "2026-09-19T17:57:00-FLR-001",
+    "classType": "C3.3",
+    "peakTime": "2026-09-19T18:17Z",
+    "location": "N14E90",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/48733/-1"
+   },
+   {
+    "id": "2026-09-30T02:30:00-FLR-001",
+    "classType": "C8.6",
+    "peakTime": "2026-09-30T02:46Z",
+    "location": "N11W48",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/48900/-1"
+   },
+   {
+    "id": "2026-10-04T06:13:00-FLR-001",
+    "classType": "B3.2",
+    "peakTime": "2026-10-04T06:19Z",
+    "location": "S20W62",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/48956/-1"
+   },
+   {
+    "id": "2026-10-04T06:21:00-FLR-001",
+    "classType": "B9.3",
+    "peakTime": "2026-10-04T06:30Z",
+    "location": "S19W62",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/48957/-1"
+   },
+   {
+    "id": "2026-10-05T18:36:00-FLR-001",
+    "classType": "M1.0",
+    "peakTime": "2026-10-05T18:48Z",
+    "location": "N20E10",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/48985/-1"
+   },
+   {
+    "id": "2026-10-06T05:38:00-FLR-001",
+    "classType": "M1.4",
+    "peakTime": "2026-10-06T06:10Z",
+    "location": "N10E12",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/48986/-1"
+   },
+   {
+    "id": "2026-10-06T07:47:00-FLR-001",
+    "classType": "M1.8",
+    "peakTime": "2026-10-06T08:05Z",
+    "location": "N08E07",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/48987/-1"
+   },
+   {
+    "id": "2026-10-07T12:49:00-FLR-001",
+    "classType": "C7.9",
+    "peakTime": "2026-10-07T13:17Z",
+    "location": "N10W04",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49010/-1"
+   },
+   {
+    "id": "2026-10-08T15:29:00-FLR-001",
+    "classType": "M6.7",
+    "peakTime": "2026-10-08T15:48Z",
+    "location": "N12W20",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49015/-1"
+   },
+   {
+    "id": "2026-10-09T13:55:00-FLR-001",
+    "classType": "M1.3",
+    "peakTime": "2026-10-09T14:09Z",
+    "location": "N15W90",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49045/-1"
+   },
+   {
+    "id": "2026-10-10T13:56:00-FLR-001",
+    "classType": "M1.2",
+    "peakTime": "2026-10-10T14:12Z",
+    "location": "N08W51",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49052/-1"
+   },
+   {
+    "id": "2026-10-10T14:58:00-FLR-001",
+    "classType": "M6.4",
+    "peakTime": "2026-10-10T15:10Z",
+    "location": "N08W54",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49057/-1"
+   },
+   {
+    "id": "2026-10-16T15:38:00-FLR-001",
+    "classType": "M1.3",
+    "peakTime": "2026-10-16T15:42Z",
+    "location": "S16W15",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49134/-1"
+   },
+   {
+    "id": "2026-10-19T08:54:00-FLR-001",
+    "classType": "M1.6",
+    "peakTime": "2026-10-19T09:03Z",
+    "location": "S15W48",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49165/-1"
+   },
+   {
+    "id": "2026-10-23T03:43:00-FLR-001",
+    "classType": "C1.3",
+    "peakTime": "2026-10-23T03:55Z",
+    "location": "N10W89",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49214/-1"
+   },
+   {
+    "id": "2026-10-26T08:21:00-FLR-001",
+    "classType": "C1.9",
+    "peakTime": "2026-10-26T08:38Z",
+    "location": "S10W70",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49256/-1"
+   },
+   {
+    "id": "2026-10-26T18:17:00-FLR-001",
+    "classType": "C2.8",
+    "peakTime": "2026-10-26T18:40Z",
+    "location": "S12W77",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49278/-1"
+   },
+   {
+    "id": "2026-11-05T18:21:00-FLR-001",
+    "classType": "M3.5",
+    "peakTime": "2026-11-05T18:33Z",
+    "location": "S08E35",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49391/-1"
+   },
+   {
+    "id": "2026-11-07T12:26:00-FLR-001",
+    "classType": "M1.2",
+    "peakTime": "2026-11-07T12:43Z",
+    "location": "S08E13",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49433/-1"
+   },
+   {
+    "id": "2026-11-07T17:11:00-FLR-001",
+    "classType": "M1.4",
+    "peakTime": "2026-11-07T17:17Z",
+    "location": "S08E10",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49442/-1"
+   },
+   {
+    "id": "2026-11-07T18:21:00-FLR-001",
+    "classType": "M1.9",
+    "peakTime": "2026-11-07T18:42Z",
+    "location": "S07E06",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49448/-1"
+   },
+   {
+    "id": "2026-11-08T07:33:00-FLR-001",
+    "classType": "M1.7",
+    "peakTime": "2026-11-08T07:46Z",
+    "location": "S07W03",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49453/-1"
+   },
+   {
+    "id": "2026-11-08T15:29:00-FLR-001",
+    "classType": "M1.1",
+    "peakTime": "2026-11-08T15:37Z",
+    "location": "S07W01",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49456/-1"
+   },
+   {
+    "id": "2026-11-08T18:15:00-FLR-001",
+    "classType": "M1.1",
+    "peakTime": "2026-11-08T18:27Z",
+    "location": "S07W04",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49461/-1"
+   },
+   {
+    "id": "2026-11-11T21:06:00-FLR-001",
+    "classType": "M1.7",
+    "peakTime": "2026-11-11T21:21Z",
+    "location": "S07W46",
+    "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49504/-1"
+   }
+  ],
+  "sep": []
+ }
+}
