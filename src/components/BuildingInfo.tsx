@@ -3,7 +3,7 @@ import { BUILDINGS, costFor, maxLevelOf, powerDraw, timeFor } from '../game/conf
 import { OpsCenterSummary, StationLinkControls } from './NetworkControls';
 import { REAL_WORLD } from '../game/config/realworld';
 import { ENVIRONMENT, MAINTENANCE } from '../game/config/station';
-import { canClean, canRepair } from '../game/systems/construction';
+import { canClean, canMove, canRepair } from '../game/systems/construction';
 import { solarFarmEfficiency } from '../game/systems/power';
 import { Bar } from './ui';
 import { RADIATION } from '../game/config/balance';
@@ -22,6 +22,7 @@ export default function BuildingInfo() {
   const MAX_LEVEL = maxLevelOf(b.type);
   const next = b.level + 1;
   const up = canUpgrade(s, b);
+  const mv = canMove(s, b.id);
   const sh = b.type === 'habitat' ? canShield(s, b) : null;
   const now = statsFor(s, b.type, b.level);
   const after = next <= MAX_LEVEL ? statsFor(s, b.type, next) : [];
@@ -116,6 +117,9 @@ export default function BuildingInfo() {
               {!b.job && !up.ok && b.level < MAX_LEVEL && <span className="w-full text-[11px] font-semibold text-warn">{up.reason}</span>}
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
+              <button className="btn btn-gray text-sm" disabled={!mv.ok} onClick={() => store.beginMove(b.id)} title={mv.ok ? 'Pick it up and place it somewhere else (G)' : mv.reason}>
+                ✥ Move
+              </button>
               {b.level > 0 && def.power > 0 && (
                 <button className={`btn text-sm ${b.enabled ? 'btn-gray' : 'btn-yellow'}`} onClick={() => store.toggle(b.id)}>
                   {b.enabled ? '⏻ Switch off (save power)' : '⏻ Switch on'}

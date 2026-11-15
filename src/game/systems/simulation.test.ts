@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState, type GameState } from './state';
 import { advance, tick } from './simulation';
-import { buyBuilder, startBuild, startShield, startUpgrade, toggleEnabled } from './construction';
+import { buyBuilder, canMove, moveBuilding, startBuild, startShield, startUpgrade, toggleEnabled } from './construction';
 import { batteryCap, caps, checkPlacement, dayLength, freeBuilder, nextBuilderPrice, sunlight } from './selectors';
 import { deserialize, serialize } from './save';
 import { getTerrain } from './terrain';
@@ -191,6 +191,36 @@ describe('upgrades and missions', () => {
     place(s, 'solar');
     advance(s, 0.5, 0.25);
     expect(s.missionsDone).toContain('c1_solar');
+  });
+});
+
+describe('moving buildings', () => {
+  it('moves a finished building to a free spot, keeping its level, for free', () => {
+    const s = rich();
+    const mine = place(s, 'mine');
+    const before = { ...s.res };
+    const from = { x: mine.x, y: mine.y };
+    // Overlapping its own old footprint is allowed; another building is not.
+    expect(checkPlacement(s, 'mine', from.x, from.y, mine.id).ok).toBe(true);
+    let to: { x: number; y: number } | null = null;
+    for (let y = 0; y < MAP_SIZE && !to; y++) for (let x = 0; x < MAP_SIZE && !to; x++) {
+      if ((x !== from.x || y !== from.y) && checkPlacement(s, 'mine', x, y, mine.id).ok) to = { x, y };
+    }
+    const r = moveBuilding(s, mine.id, to!.x, to!.y);
+    expect(r.ok).toBe(true);
+    expect({ x: mine.x, y: mine.y }).toEqual(to);
+    expect(mine.level).toBe(1);
+    expect(s.res).toEqual(before);
+  });
+
+  it('refuses occupied spots, the same spot and buildings that are being worked on', () => {
+    const s = rich();
+    const cc = s.buildings.find((b) => b.type === 'command')!;
+    const mine = place(s, 'mine');
+    expect(moveBuilding(s, mine.id, cc.x, cc.y).ok).toBe(false);
+    expect(moveBuilding(s, mine.id, mine.x, mine.y).ok).toBe(false);
+    const site = place(s, 'solar', false);
+    expect(canMove(s, site.id).ok).toBe(false);
   });
 });
 

@@ -10,6 +10,9 @@ const UI_DEPTH = 2_000_000;
 /** Visual for one building: sprite, construction site, timer, status badge, lights and effects. */
 export class BuildingView {
   readonly id: number;
+  /** Tile the view was built for; a moved building gets a fresh view. */
+  readonly tx: number;
+  readonly ty: number;
   sprite: Phaser.GameObjects.Image;
   site: Phaser.GameObjects.Image | null = null;
   scaffold: Phaser.GameObjects.Image | null = null;
@@ -31,6 +34,8 @@ export class BuildingView {
 
   constructor(private scene: Phaser.Scene, b: Building) {
     this.id = b.id;
+    this.tx = b.x;
+    this.ty = b.y;
     const n = BUILDINGS[b.type].size;
     const c = footprintCenter(b.x, b.y, n);
     this.cx = c.x;

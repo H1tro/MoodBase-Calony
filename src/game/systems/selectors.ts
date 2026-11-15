@@ -95,18 +95,23 @@ export function buildingAt(s: GameState, x: number, y: number): Building | undef
 
 export type PlacementCheck = { ok: boolean; reason?: string; cells: { x: number; y: number; ok: boolean }[] };
 
-export function checkPlacement(s: GameState, type: BuildingType, x: number, y: number): PlacementCheck {
+/** `ignoreId`: a building being moved does not block its own new spot. */
+export function checkPlacement(s: GameState, type: BuildingType, x: number, y: number, ignoreId?: number): PlacementCheck {
   const terrain = getTerrain(s.seed, s.difficulty);
+  const occupied = (cx: number, cy: number) => {
+    const o = buildingAt(s, cx, cy);
+    return !!o && o.id !== ignoreId;
+  };
   const cells = footprint(type, x, y).map((c) => {
     const kind = tileAt(terrain, c.x, c.y);
-    const ok = kind !== null && kind !== 'crater' && kind !== 'boulder' && !buildingAt(s, c.x, c.y);
+    const ok = kind !== null && kind !== 'crater' && kind !== 'boulder' && !occupied(c.x, c.y);
     return { ...c, ok };
   });
   if (cells.some((c) => c.x < 0 || c.y < 0 || c.x >= MAP_SIZE || c.y >= MAP_SIZE)) return { ok: false, reason: 'Outside the map', cells };
   const bad = cells.find((c) => !c.ok);
   if (bad) {
     const k = tileAt(terrain, bad.x, bad.y);
-    const reason = buildingAt(s, bad.x, bad.y) ? 'Space is occupied' : k === 'crater' ? 'Cannot build inside a crater' : 'Boulder in the way';
+    const reason = occupied(bad.x, bad.y) ? 'Space is occupied' : k === 'crater' ? 'Cannot build inside a crater' : 'Boulder in the way';
     return { ok: false, reason, cells };
   }
   if (BUILDINGS[type].needsIce && !cells.some((c) => tileAt(terrain, c.x, c.y) === 'ice')) {

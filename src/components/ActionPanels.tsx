@@ -110,16 +110,19 @@ export function PlacementControls() {
   if (!ui.placing) return null;
   const check = store.ghostCheck();
   const ok = !!check?.ok;
+  const moving = ui.moving !== null;
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex justify-center p-3">
       <div className="panel pointer-events-auto slide-down flex flex-wrap items-center justify-center gap-3 px-4 py-3">
         <div className="text-center sm:text-left">
-          <div className="title text-lg leading-tight">Placing a building</div>
+          <div className="title text-lg leading-tight">{moving ? 'Moving a building' : 'Placing a building'}</div>
           <div className={`text-xs font-semibold ${!ui.ghost ? 'text-white/70' : ok ? 'text-good' : 'text-bad'}`}>
-            {!ui.ghost ? 'Left-click the map to build (touch: tap, then ✓ Build)' : ok ? 'Green = good spot. Left-click to build here.' : `Red: ${check?.reason}`}
+            {!ui.ghost ? 'Left-click the map to build (touch: tap, then ✓ Build)'
+              : ok ? (moving ? 'Green = free spot. Left-click to move it here (free).' : 'Green = good spot. Left-click to build here.')
+              : `Red: ${check?.reason}`}
           </div>
         </div>
-        <button className="btn btn-green h-12 px-5 text-lg" disabled={!ok} onClick={() => store.confirmPlacement()}>✓ Build</button>
+        <button className="btn btn-green h-12 px-5 text-lg" disabled={!ok} onClick={() => store.confirmPlacement()}>{moving ? '✓ Move here' : '✓ Build'}</button>
         <button className="btn btn-red h-12 px-5 text-lg" onClick={() => store.cancelPlacement()}>✕ Cancel</button>
       </div>
     </div>

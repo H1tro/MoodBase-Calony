@@ -22,6 +22,27 @@ export function canStartBuild(s: GameState, type: BuildingType): Result {
   return { ok: true };
 }
 
+/** Can this building be picked up and moved? (Free and instant, like relocating a module with a crane rover.) */
+export function canMove(s: GameState, id: number): Result {
+  const b = s.buildings.find((x) => x.id === id);
+  if (!b) return fail('Building not found');
+  if (b.job) return fail('Wait until the builder has finished working on it');
+  return { ok: true };
+}
+
+export function moveBuilding(s: GameState, id: number, x: number, y: number): Result {
+  const can = canMove(s, id);
+  if (!can.ok) return can;
+  const b = s.buildings.find((v) => v.id === id)!;
+  if (b.x === x && b.y === y) return fail('It is already here');
+  const place = checkPlacement(s, b.type, x, y, id);
+  if (!place.ok) return fail(place.reason ?? 'Invalid location');
+  b.x = x;
+  b.y = y;
+  addLog(s, `📦 ${BUILDINGS[b.type].name} moved to a new spot.`);
+  return { ok: true, id };
+}
+
 export function startBuild(s: GameState, type: BuildingType, x: number, y: number): Result {
   const can = canStartBuild(s, type);
   if (!can.ok) return can;

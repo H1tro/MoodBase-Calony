@@ -361,7 +361,8 @@ export class MoonScene extends Phaser.Scene {
       this.ghostCells.strokePath();
     }
     const n = BUILDINGS[placing].size;
-    const info = TEX.get(texKey(placing, 1))!;
+    const moved = store.ui.moving !== null ? store.state.buildings.find((b) => b.id === store.ui.moving) : undefined;
+    const info = TEX.get(texKey(placing, Math.max(1, moved?.level ?? 1), moved?.shield ?? 0))!;
     const c = footprintCenter(ghost.x, ghost.y, n);
     this.ghost.setTexture(info.key).setOrigin(0.5, info.originY).setPosition(c.x, c.y).setVisible(true);
     this.ghost.setTint(check.ok ? 0xffffff : 0xff8080);
@@ -388,6 +389,14 @@ export class MoonScene extends Phaser.Scene {
     for (const b of s.buildings) {
       seen.add(b.id);
       let v = this.views.get(b.id);
+      if (v && (v.tx !== b.x || v.ty !== b.y)) {
+        // The building was moved: rebuild its visuals at the new tile.
+        v.destroy();
+        this.shadows.get(b.id)?.destroy();
+        this.shadows.delete(b.id);
+        this.views.delete(b.id);
+        v = undefined;
+      }
       if (!v) {
         v = new BuildingView(this, b);
         this.views.set(b.id, v);
@@ -397,6 +406,8 @@ export class MoonScene extends Phaser.Scene {
       const sh = this.shadows.get(b.id)!;
       if (sh.texture.key !== v.sprite.texture.key) sh.setTexture(v.sprite.texture.key);
       sh.setOrigin(v.sprite.originX, v.sprite.originY).setVisible(b.level > 0);
+      // While a building is being moved, its old spot fades out.
+      if (store.ui.moving === b.id) v.sprite.setAlpha(0.3);
     }
     for (const [id, v] of this.views) {
       if (!seen.has(id)) {

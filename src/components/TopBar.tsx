@@ -71,13 +71,14 @@ export const SHORTCUTS: [string, string][] = [
   ['Wheel / Q E', 'Zoom out / in'],
   ['B', 'Build menu'],
   ['U', 'Upgrade the selected building'],
+  ['G', 'Move the selected building'],
   ['R', 'Research'],
   ['T', 'Spaceport (trade)'],
   ['M', 'Mission Control'],
   ['L', 'Lunar Library & glossary'],
   ['Space', 'Pause / resume'],
   ['1 2 3', 'Speed 1× / 2× / 4×'],
-  ['Enter', 'Confirm placement'],
+  ['Enter', 'Confirm placement or move'],
   ['Esc / Right-click', 'Cancel placement, close panel, deselect'],
 ];
 

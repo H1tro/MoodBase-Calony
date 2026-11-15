@@ -57,6 +57,11 @@ function onKey(e: KeyboardEvent) {
     case 'm':
       if (!ui.placing) store.setPanel('monitor');
       break;
+    case 'g':
+      if (ui.placing) break;
+      if (ui.selectedId !== null) store.beginMove(ui.selectedId);
+      else store.flash('Select a building first, then press G to move it.', 'ok');
+      break;
     case 'l':
       window.dispatchEvent(new Event('open-library'));
       break;

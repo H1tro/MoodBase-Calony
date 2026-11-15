@@ -26,6 +26,8 @@ export type Panel = 'build' | 'research' | 'spaceport' | 'monitor' | null;
 
 export interface UIState {
   placing: BuildingType | null;
+  /** Set while an existing building is being moved (placing then holds its type). */
+  moving: number | null;
   ghost: { x: number; y: number } | null;
   selectedId: number | null;
   panel: Panel;
@@ -49,7 +51,7 @@ const nextFrame = () => new Promise<void>((r) => setTimeout(r, 0));
 
 class GameStore {
   state: GameState;
-  ui: UIState = { placing: null, ghost: null, selectedId: null, panel: null, flash: null };
+  ui: UIState = { placing: null, moving: null, ghost: null, selectedId: null, panel: null, flash: null };
   speed = 1;
   private lastSpeed = 1;
   version = 0;
@@ -202,7 +204,17 @@ class GameStore {
   beginPlacement(type: BuildingType) {
     const can = C.canStartBuild(this.state, type);
     if (!can.ok) return this.report(can);
-    this.ui = { ...this.ui, placing: type, ghost: null, panel: null, selectedId: null };
+    this.ui = { ...this.ui, placing: type, moving: null, ghost: null, panel: null, selectedId: null };
+    this.emit();
+    return can;
+  }
+
+  /** Pick up an existing building; the same green/red ghost then shows where it can go. */
+  beginMove(id: number) {
+    const can = C.canMove(this.state, id);
+    if (!can.ok) return this.report(can);
+    const b = this.state.buildings.find((x) => x.id === id)!;
+    this.ui = { ...this.ui, placing: b.type, moving: id, ghost: { x: b.x, y: b.y }, panel: null, selectedId: null };
     this.emit();
     return can;
   }
@@ -214,20 +226,34 @@ class GameStore {
   }
 
   cancelPlacement() {
+    const moved = this.ui.moving;
     this.ui.placing = null;
+    this.ui.moving = null;
     this.ui.ghost = null;
+    if (moved !== null) this.ui.selectedId = moved;
     this.emit();
   }
 
   ghostCheck() {
     const { placing, ghost } = this.ui;
     if (!placing || !ghost) return null;
-    return checkPlacement(this.state, placing, ghost.x, ghost.y);
+    return checkPlacement(this.state, placing, ghost.x, ghost.y, this.ui.moving ?? undefined);
   }
 
   confirmPlacement() {
-    const { placing, ghost } = this.ui;
+    const { placing, ghost, moving } = this.ui;
     if (!placing || !ghost) return;
+    if (moving !== null) {
+      const cur = this.state.buildings.find((b) => b.id === moving);
+      // Dropped back on its own spot: nothing to do.
+      if (cur && cur.x === ghost.x && cur.y === ghost.y) return this.cancelPlacement();
+      const r = C.moveBuilding(this.state, moving, ghost.x, ghost.y);
+      if (r.ok) {
+        this.ui = { ...this.ui, placing: null, moving: null, ghost: null, selectedId: moving };
+        this.persist();
+      }
+      return this.report(r, r.ok ? 'Building moved' : undefined);
+    }
     const r = C.startBuild(this.state, placing, ghost.x, ghost.y);
     if (r.ok) {
       this.ui.placing = null;
@@ -306,7 +332,7 @@ class GameStore {
     this.returnTo = this.screen === 'game' && !this.state.failed ? 'game' : 'title';
     this.pendingDifficulty = this.state.difficulty;
     this.screen = 'select';
-    this.ui = { placing: null, ghost: null, selectedId: null, panel: null, flash: null };
+    this.ui = { placing: null, moving: null, ghost: null, selectedId: null, panel: null, flash: null };
     this.emit();
   }
   /** Leave the selection screen without starting over. */
@@ -336,7 +362,7 @@ class GameStore {
       ],
     };
     this.screen = 'launch';
-    this.ui = { placing: null, ghost: null, selectedId: null, panel: null, flash: null };
+    this.ui = { placing: null, moving: null, ghost: null, selectedId: null, panel: null, flash: null };
     this.emit();
     const L = this.mission;
     const done = (id: string) => {
@@ -399,7 +425,7 @@ class GameStore {
     this.resetTracking();
     saveProfile(this.profile);
     tick(this.state, 0.001);
-    this.ui = { placing: null, ghost: null, selectedId: null, panel: null, flash: null };
+    this.ui = { placing: null, moving: null, ghost: null, selectedId: null, panel: null, flash: null };
     this.persist();
     this.emit();
   }
@@ -419,7 +445,7 @@ class GameStore {
     this.persist();
     this.hasColony = true;
     this.screen = 'title';
-    this.ui = { placing: null, ghost: null, selectedId: null, panel: null, flash: null };
+    this.ui = { placing: null, moving: null, ghost: null, selectedId: null, panel: null, flash: null };
     this.emit();
   }
   setSetting<K extends keyof Settings>(key: K, value: Settings[K]) {
@@ -447,7 +473,7 @@ class GameStore {
     // The colony is gone, so leave the game screen.
     if (this.screen === 'game') {
       this.screen = 'title';
-      this.ui = { placing: null, ghost: null, selectedId: null, panel: null, flash: null };
+      this.ui = { placing: null, moving: null, ghost: null, selectedId: null, panel: null, flash: null };
     }
     this.resetTracking();
     rebuildMap().catch(() => undefined);
@@ -515,7 +541,7 @@ class GameStore {
     this.pendingDifficulty = this.state.difficulty;
     tick(this.state, 0.001);
     this.resetTracking();
-    this.ui = { placing: null, ghost: null, selectedId: null, panel: null, flash: null };
+    this.ui = { placing: null, moving: null, ghost: null, selectedId: null, panel: null, flash: null };
     rebuildMap().catch(() => undefined);
     this.flash('Cloud save loaded', 'ok');
     this.emit();
