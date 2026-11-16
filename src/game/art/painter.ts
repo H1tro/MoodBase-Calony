@@ -148,5 +148,33 @@ export class Painter {
     for (const q of pts.slice(1)) this.g.lineTo(q[0], q[1]);
     this.g.closePath();
     this.g.strokePath();
+    // Panel seams along the tile joints.
+    for (let k = 1; k < n; k++) {
+      const t = -a / 2 + (a * k) / n;
+      this.line(this.p(t, -half, 7), this.p(t, half, 7), OUTLINE, 1, 0.22);
+      this.line(this.p(-half, t, 7), this.p(half, t, 7), OUTLINE, 1, 0.22);
+    }
+    // Hazard markings on the visible pad edges, near each corner.
+    const stripes = 3;
+    const span = 0.2 / n;
+    for (const from of [0.02, 0.98 - span]) {
+      for (let k = 0; k < stripes; k++) {
+        const s0 = from + (span * k) / stripes;
+        const s1 = s0 + span / stripes;
+        const c = k % 2 === 0 ? 0xf2b705 : 0x1b1f2b;
+        this.faceL(0, 0, a, a, s0, s1, 1, 6, c);
+        this.faceR(0, 0, a, a, s0, s1, 1, 6, c);
+      }
+    }
+    // Corner marker lamps in the level colour (they glow at night).
+    const c = a / 2 - 0.05;
+    for (const [u, v] of [[-c, -c], [c, -c], [-c, c], [c, c]] as const) {
+      const [x, y] = this.p(u, v, 7);
+      this.g.fillStyle(0x2b3346, 1);
+      this.g.fillEllipse(x, y, 9, 5);
+      this.g.fillStyle(trim, 1);
+      this.g.fillCircle(x, y - 3, 2.6);
+      this.lights.push({ x: x - this.ox, y: y - 3 - this.oy, color: trim, r: 12 });
+    }
   }
 }

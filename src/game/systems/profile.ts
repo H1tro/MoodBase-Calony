@@ -1,4 +1,5 @@
 import { DIFFICULTY_ORDER, type DifficultyId } from '../config/difficulty';
+import type { SkinId } from '../config/skins';
 
 /** Player preferences, chosen in Options. */
 export interface Settings {
@@ -14,6 +15,10 @@ export interface Settings {
   graphics: 'high' | 'low';
   /** Show the keyboard shortcut line on wide screens. */
   keyHints: boolean;
+  /** Cosmetic surface look (colours and sky only; the simulation stays lunar). */
+  skin: SkinId;
+  /** 'globe' draws the map on a curved world with a round horizon; 'flat' is the classic plateau. */
+  mapShape: 'globe' | 'flat';
 }
 
 export interface Unlock {
@@ -48,6 +53,8 @@ export const DEFAULT_SETTINGS: Settings = {
   reduceMotion: false,
   graphics: 'high',
   keyHints: true,
+  skin: 'moon',
+  mapShape: 'globe',
 };
 
 export function createProfile(): Profile {

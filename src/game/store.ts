@@ -452,7 +452,7 @@ class GameStore {
     this.profile.settings[key] = value;
     saveProfile(this.profile);
     // Graphics quality applies to the map, so rebuild it with the new setting.
-    if (key === 'graphics') rebuildMap().catch(() => undefined);
+    if (key === 'graphics' || key === 'skin' || key === 'mapShape') rebuildMap().catch(() => undefined);
     this.emit();
   }
   /** Clear achievements and career stats (settings are kept). */

@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { store, useGame } from '../game/store';
 import type { Settings } from '../game/systems/profile';
+import { SKINS, SKIN_ORDER, skinOf } from '../game/config/skins';
 
 function Row({ label, hint, children }: { label: string; hint: string; children: ReactNode }) {
   return (
@@ -29,7 +30,7 @@ function Toggle({ k }: { k: 'cinematic' | 'briefing' | 'reduceMotion' | 'keyHint
   );
 }
 
-function Choice<K extends 'defaultSpeed' | 'graphics'>({ k, options }: { k: K; options: [Settings[K], string][] }) {
+function Choice<K extends 'defaultSpeed' | 'graphics' | 'skin' | 'mapShape'>({ k, options }: { k: K; options: [Settings[K], string][] }) {
   const { profile } = useGame();
   return (
     <div className="flex gap-1">
@@ -44,6 +45,7 @@ function Choice<K extends 'defaultSpeed' | 'graphics'>({ k, options }: { k: K; o
 
 /** Game options. Saved in the career profile, so they apply to every colony. */
 export default function OptionsPanel() {
+  const { profile } = useGame();
   const [confirm, setConfirm] = useState<null | 'colony' | 'achievements'>(null);
   return (
     <div>
@@ -61,6 +63,12 @@ export default function OptionsPanel() {
       <div className="mt-3 text-[11px] font-bold uppercase tracking-widest text-cyan">Display</div>
       <Row label="Graphics quality" hint="Low turns off regolith grain, ice glints, long shadows and footprints for slower computers.">
         <Choice k="graphics" options={[['high', 'High'], ['low', 'Low']]} />
+      </Row>
+      <Row label="Surface skin" hint={`${skinOf(profile.settings.skin).fact} Looks only: the simulation keeps its lunar values.`}>
+        <Choice k="skin" options={SKIN_ORDER.map((id) => [id, SKINS[id].name])} />
+      </Row>
+      <Row label="Map shape" hint="Globe draws the base on a curved world with a round horizon. Flat is the classic plateau with mountain ridges.">
+        <Choice k="mapShape" options={[['globe', 'Globe'], ['flat', 'Flat']]} />
       </Row>
       <Row label="Reduce motion" hint="No camera shake or zoom in the cinematic, and no red flash during solar storms.">
         <Toggle k="reduceMotion" />

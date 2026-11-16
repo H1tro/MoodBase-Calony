@@ -21,6 +21,64 @@ export const texKey = (type: BuildingType, level: number, shield = 0) =>
 type Draw = (P: Painter, L: number, trim: number, extra: number) => void;
 
 // ---------------------------------------------------------------------------
+// Small props shared by several buildings (decoration only; no gameplay meaning).
+const crate = (P: Painter, u: number, v: number, z = 7, c = 0xc48a3a, s = 0.18, h = 12) => {
+  P.box(u, v, s, s, h, c, z, shade(c, 1.2));
+  P.faceL(u, v, s, s, 0.1, 0.9, z + h * 0.4, z + h * 0.62, shade(c, 0.6));
+};
+const barrel = (P: Painter, u: number, v: number, c: number, z = 7) => {
+  P.cylinder(u, v, 6, 13, c, z, 8);
+  P.lathe(u, v, [[6.6, 5], [6.6, 7.5]], 0xf2f5fa, z, 8);
+};
+const lamp = (P: Painter, u: number, v: number, h: number, color: number, z = 7) => {
+  P.line(P.p(u, v, z), P.p(u, v, z + h), 0x8c95a6, 2);
+  const [x, y] = P.p(u, v, z + h);
+  P.g.fillStyle(0x2b3346, 1).fillCircle(x, y, 4.5);
+  P.g.fillStyle(color, 1).fillCircle(x, y, 3);
+  P.lights.push({ x: x - P.ox, y: y - P.oy, color, r: 20 });
+};
+/** A flag held out by a top rod, like the Apollo flags: there is no wind on the Moon. */
+const flag = (P: Painter, u: number, v: number, h: number, color: number, z = 7) => {
+  const [x, y] = P.p(u, v, z);
+  P.line([x, y], [x, y - h], 0xdfe7f2, 2);
+  P.line([x, y - h], [x + 20, y - h], 0xdfe7f2, 2);
+  P.poly([[x + 1, y - h + 1], [x + 20, y - h + 1], [x + 20, y - h + 13], [x + 1, y - h + 13]], color, 1, 0.5);
+  P.poly([[x + 1, y - h + 5], [x + 20, y - h + 5], [x + 20, y - h + 9], [x + 1, y - h + 9]], 0xffffff, 0.9, 0);
+};
+const rock = (P: Painter, u: number, v: number, r: number, c = 0x8d8a86, z = 7) => {
+  P.lathe(u, v, [[r, 0], [r * 0.8, r * 0.5], [r * 0.3, r * 0.85], [0, r * 0.9]], c, z, 6);
+};
+/** A pipe with a dark outline between two iso points. */
+const pipe = (P: Painter, a: Pt, b: Pt, color = 0xc9d3e6, w = 4) => {
+  P.line(a, b, 0x141826, w + 2, 0.7);
+  P.line(a, b, color, w);
+};
+const ladder = (P: Painter, x: number, y: number, h: number) => {
+  P.line([x - 4, y], [x - 4, y - h], 0xdfe7f2, 1.5);
+  P.line([x + 4, y], [x + 4, y - h], 0xdfe7f2, 1.5);
+  for (let k = 4; k < h; k += 7) P.line([x - 4, y - k], [x + 4, y - k], 0xdfe7f2, 1.5);
+};
+/** Glass frame: ribs drawn over the front of a dome (same profile as Painter.dome). */
+const domeRibs = (P: Painter, u: number, v: number, r: number, h: number, z: number, color = 0xffffff, alpha = 0.35) => {
+  const [cx, cy] = P.p(u, v, z);
+  const prof: [number, number][] = [[r, 0], [r * 0.93, h * 0.38], [r * 0.72, h * 0.72], [r * 0.38, h * 0.95], [0, h]];
+  for (const th of [0.12, 0.31, 0.5, 0.69, 0.88]) {
+    const a = th * Math.PI;
+    for (let i = 0; i < prof.length - 1; i++) {
+      const [r0, h0] = prof[i];
+      const [r1, h1] = prof[i + 1];
+      P.line([cx + r0 * Math.cos(a), cy + 0.5 * r0 * Math.sin(a) - h0], [cx + r1 * Math.cos(a), cy + 0.5 * r1 * Math.sin(a) - h1], color, 1.5, alpha);
+    }
+  }
+};
+/** Yellow and black warning band on the left face of a box. */
+const hazardL = (P: Painter, u: number, v: number, a: number, b: number, s0: number, s1: number, t0: number, t1: number, n = 8) => {
+  for (let k = 0; k < n; k++) {
+    P.faceL(u, v, a, b, s0 + ((s1 - s0) * k) / n, s0 + ((s1 - s0) * (k + 1)) / n, t0, t1, k % 2 ? 0x1b1f2b : 0xf2b705);
+  }
+};
+
+// ---------------------------------------------------------------------------
 const command: Draw = (P, L, trim) => {
   P.pad(3, trim);
   if (L >= 2) { // back-right wing
@@ -75,9 +133,21 @@ const command: Draw = (P, L, trim) => {
   P.g.fillCircle(bx, by, 5);
   P.lights.push({ x: bx - P.ox, y: by - P.oy, color: L >= 5 ? 0xffc93c : 0xff4d4d, r: 22 });
   // Front entrance module
+  // Roof service units in front of the tower
+  P.box(0.78, 0.22, 0.2, 0.2, 9, 0x8c95a6, 71);
+  P.box(0.22, 0.78, 0.2, 0.2, 9, 0x8c95a6, 71);
   P.box(0.95, 0.95, 0.55, 0.55, 28, 0x35507a, 7);
   P.faceL(0.95, 0.95, 0.55, 0.55, 0.25, 0.75, 7, 28, 0x1b2238);
+  hazardL(P, 0.95, 0.95, 0.55, 0.55, 0.2, 0.8, 29, 33, 6);
   P.light(0.95, 1.25, 20, 0x9be7ff, 24);
+  // Entrance ramp, supplies and the outpost flag
+  P.box(0.95, 1.31, 0.3, 0.16, 3, 0x8c95a6, 7);
+  flag(P, 0.3, 1.3, 46, 0x2f6fd6);
+  crate(P, 1.3, 0.3);
+  crate(P, 1.3, 0.52, 7, 0x5b8fd6);
+  crate(P, 1.31, 0.4, 19, 0xc48a3a, 0.16, 10);
+  lamp(P, 0.62, 1.32, 22, 0x9be7ff);
+  lamp(P, 1.32, 0.68, 22, 0x9be7ff);
 };
 
 const solar: Draw = (P, L, trim) => {
@@ -85,6 +155,8 @@ const solar: Draw = (P, L, trim) => {
   const slots: [number, number][] = [[-0.48, -0.48], [0.48, -0.48], [-0.48, 0.48], [0.48, 0.48]];
   const count = Math.min(4, L + 1);
   const panelColor = L >= 5 ? 0x1d3f8f : 0x1b4fa8;
+  // Power cables from each panel to the inverter
+  slots.slice(0, count).forEach(([su, sv]) => P.line(P.p(su, sv, 8), P.p(0, 0, 8), 0x1b1f2b, 2.5, 0.85));
   slots.forEach(([su, sv], i) => {
     if (i >= count) {
       P.box(su, sv, 0.25, 0.25, 6, 0x5b6274, 7);
@@ -106,7 +178,16 @@ const solar: Draw = (P, L, trim) => {
   });
   // Inverter box
   P.box(0, 0, 0.32, 0.32, 18 + L * 2, 0x3a4459, 7);
+  P.faceL(0, 0, 0.32, 0.32, 0.2, 0.8, 11, 14, 0xf2b705);
   P.light(0, 0.16, 20, 0x7dff9a, 14);
+  // Junction box with status LEDs and a spare panel leaning on it
+  P.box(0, 0.84, 0.3, 0.14, 12, 0x5b6274, 7);
+  for (const [s, c] of [[0.25, 0x7dff9a], [0.5, 0x7dff9a], [0.75, 0xffc93c]] as const) {
+    const [x, y] = P.p(-0.15 + 0.3 * s, 0.91, 14);
+    P.g.fillStyle(c, 1).fillCircle(x, y, 1.8);
+  }
+  P.light(0, 0.91, 14, 0x7dff9a, 10);
+  P.poly([P.p(0.84, -0.12, 8), P.p(0.84, 0.16, 8), P.p(0.78, 0.16, 24), P.p(0.78, -0.12, 24)], panelColor, 1, 0.8, 0x0b1020, 1.5);
 };
 
 const battery: Draw = (P, L, trim) => {
@@ -125,6 +206,13 @@ const battery: Draw = (P, L, trim) => {
     P.cylinder(u - 0.08, v - 0.08, 4, 6, 0xc9d3e6, 7 + h, 6);
     P.cylinder(u + 0.1, v + 0.06, 4, 6, 0xff5b5b, 7 + h, 6);
   });
+  // Bus cable along the front with a feed to every cell row, and a charge gauge
+  pipe(P, P.p(-0.72, 0.6, 10), P.p(0.42, 0.6, 10), 0xff8a3d, 3);
+  for (const u of [-0.5, 0.05]) P.line(P.p(u, 0.47, 10), P.p(u, 0.6, 10), 0xff8a3d, 3);
+  P.box(-0.62, 0.8, 0.34, 0.14, 16, 0x2b3346, 7);
+  for (let k = 0; k < 4; k++) P.faceL(-0.62, 0.8, 0.34, 0.14, 0.1 + k * 0.21, 0.26 + k * 0.21, 11, 20, k < Math.min(4, L) ? 0x7dff9a : 0x3a4459);
+  P.light(-0.62, 0.87, 16, 0x7dff9a, 12);
+  barrel(P, 0.1, 0.82, 0x3a6ea5);
   // Lightning badge
   const [x, y] = P.p(0.7, 0.75, 9);
   P.poly([[x - 4, y - 14], [x + 6, y - 14], [x + 1, y - 6], [x + 7, y - 6], [x - 5, y + 6], [x - 1, y - 3], [x - 7, y - 3]], 0xffd23f, 1, 0.6);
@@ -134,6 +222,8 @@ const mine: Draw = (P, L, trim) => {
   P.pad(2, trim);
   // Regolith spoil heap
   P.lathe(-0.5, -0.5, [[40, 0], [30, 16], [16, 30], [0, 38 + L * 3]], 0x9a8f84, 7, 9);
+  rock(P, 0.78, -0.72, 9);
+  rock(P, 0.86, -0.5, 6, 0x7d7a76);
   // Conveyor
   P.box(-0.1, -0.2, 0.7, 0.16, 6, 0x3a4459, 30);
   // Body
@@ -156,6 +246,13 @@ const mine: Draw = (P, L, trim) => {
   P.g.fillStyle(0xff4d4d, 1);
   P.g.fillCircle(ax, ay - 4, 5);
   P.lights.push({ x: ax - P.ox, y: ay - 4 - P.oy, color: 0xff4d4d, r: 22 });
+  // Rails with an ore cart, and a work light
+  P.line(P.p(-0.86, 0.22, 8), P.p(-0.3, 0.86, 8), 0x2b2f3a, 2);
+  P.line(P.p(-0.78, 0.16, 8), P.p(-0.22, 0.8, 8), 0x2b2f3a, 2);
+  P.box(-0.58, 0.52, 0.24, 0.2, 10, 0x5b6274, 9, 0x3a4459);
+  P.lathe(-0.58, 0.52, [[9, 0], [5, 6], [0, 8]], 0x9a8f84, 19, 7);
+  lamp(P, -0.3, 0.86, 26, 0xffe08a);
+  hazardL(P, 0.3, 0.3, 1.0, 0.9, 0, 1, 31, 36, 12);
 };
 
 const refinery: Draw = (P, L, trim) => {
@@ -175,7 +272,16 @@ const refinery: Draw = (P, L, trim) => {
     P.light(u, v, h + sh + 4, 0xff8a3d, 30);
   }
   // Pipe to tank
-  P.line(P.p(-0.5, -0.25, 40), P.p(-0.2, -0.1, 40), 0xc9d3e6, 5);
+  pipe(P, P.p(-0.5, -0.25, 40), P.p(-0.2, -0.1, 40), 0xc9d3e6, 5);
+  // Tank ladder, pipe run along the wall, fuel drums and a stack of hot ingots
+  const [tx, ty] = P.p(-0.5, -0.5, 7);
+  ladder(P, tx + 6, ty + 12, 50);
+  pipe(P, P.p(-0.4, 0.72, 13), P.p(0.7, 0.72, 13), 0xd8643f, 3);
+  barrel(P, -0.74, 0.3, 0xe63946);
+  barrel(P, -0.74, 0.52, 0xe63946);
+  barrel(P, -0.6, 0.78, 0x3a6ea5);
+  for (const [u, v, z] of [[0.8, -0.7, 7], [0.8, -0.56, 7], [0.8, -0.63, 13]] as const) P.box(u, v, 0.16, 0.1, 6, 0xffb347, z, 0xffd58a);
+  P.light(0.8, -0.63, 16, 0xff8a3d, 22);
 };
 
 const ice: Draw = (P, L, trim) => {
@@ -197,6 +303,16 @@ const ice: Draw = (P, L, trim) => {
   P.light(0.35, 0.05, 33 + dh + 18, 0x7fe3ff, 26);
   // Hose
   P.line(P.p(-0.15, 0.3, 14), P.p(-0.42, 0.52, 30), 0x1b2238, 4);
+  // Frost on the pad, cut ice blocks ready for the oxygen plant, loose crystals
+  for (const [u, v, rx] of [[0.1, 0.8, 26], [0.7, 0.62, 18], [-0.8, -0.1, 14]] as const) P.ellipse(u, v, rx, rx / 2, 0xffffff, 0.2, 7);
+  for (const [u, v, z] of [[0.4, 0.76, 7], [0.62, 0.76, 7], [0.51, 0.76, 19]] as const) {
+    P.box(u, v, 0.2, 0.2, 12, 0x9fdcff, z, 0xdff5ff);
+    P.faceL(u, v, 0.2, 0.2, 0.15, 0.45, z + 3, z + 9, 0xffffff, 0.6);
+  }
+  for (const [u, v, h] of [[0.78, -0.7, 16], [0.66, -0.8, 11]] as const) {
+    const [x, y] = P.p(u, v, 7);
+    P.poly([[x - 6, y], [x, y - h], [x + 6, y]], 0xbfefff, 1, 0.6, 0x2a6f9e);
+  }
 };
 
 const oxygen: Draw = (P, L, trim) => {
@@ -209,6 +325,17 @@ const oxygen: Draw = (P, L, trim) => {
     P.lathe(u, v, [[22, 0], [24, 8], [24, th - 12], [17, th - 2], [0, th + 4]], 0x17b3a3, 17, 10);
     P.lathe(u, v, [[25, th * 0.45], [25, th * 0.55]], 0xf2f5fa, 17, 10);
   });
+  // Feed pipes, valve wheels and a rack of oxygen bottles
+  tanks.slice(0, count).forEach(([u, v]) => {
+    pipe(P, P.p(u + 0.2, v + 0.2, 24), P.p(0.3, 0.3, 24), 0xf2f5fa, 3);
+    const [x, y] = P.p(u, v, 17 + th * 0.28);
+    P.g.lineStyle(2, 0xe63946, 1).strokeCircle(x, y + 12, 5);
+    P.g.fillStyle(0xe63946, 1).fillCircle(x, y + 12, 1.6);
+  });
+  for (const dv of [-0.3, -0.16, -0.02]) {
+    P.cylinder(0.7, dv, 4, 15, 0xf2f5fa, 17, 7);
+    P.dome(0.7, dv, 4, 4, 0x17b3a3, 32, 7);
+  }
   // Control unit (front)
   P.box(0.4, 0.4, 0.6, 0.6, 34, 0x2b3346, 17, 0x3b4558);
   P.windowL(0.4, 0.4, 0.6, 0.6, 0.2, 0.8, 12, 24, 0x7dfff0);
@@ -239,6 +366,18 @@ const greenhouse: Draw = (P, L, trim) => {
   P.g.fillEllipse(cx - 30, cy - 48 - L * 3, 26, 12);
   P.lights.push({ x: cx - P.ox, y: cy - 28 - P.oy, color: 0xfff2a8, r: 60 });
   if (L >= 5) P.lathe(0.1, 0.1, [[6, 0], [6, 18]], 0xffc93c, 17 + 58 + L * 6, 6);
+  // Glass frame, outdoor planters and an airlock door
+  domeRibs(P, 0.1, 0.1, 76, 58 + L * 6, 17);
+  for (const [u, v] of [[-0.78, 0.55], [0.6, -0.8]] as const) {
+    P.box(u, v, 0.22, 0.3, 6, 0x7a5220, 7, 0x4a3a22);
+    for (const dv of [-0.08, 0.02, 0.1]) {
+      const [x, y] = P.p(u, v + dv, 14);
+      P.g.fillStyle(0x58c46a, 1).fillCircle(x, y, 3.2);
+    }
+  }
+  P.box(0.76, 0.76, 0.3, 0.3, 22, 0xe8edf3, 7, 0xffffff);
+  P.faceL(0.76, 0.76, 0.3, 0.3, 0.25, 0.75, 7, 24, 0x2b3346);
+  P.light(0.76, 0.93, 26, 0x7dff9a, 12);
 };
 
 const habitat: Draw = (P, L, trim, shield) => {
@@ -267,6 +406,10 @@ const habitat: Draw = (P, L, trim, shield) => {
   P.box(0.72, 0.2, 0.45, 0.5, 32, 0xd9cdb4, 7, 0xeee3cc);
   P.faceR(0.72, 0.2, 0.45, 0.5, 0.25, 0.75, 7, 32, 0x2b3346);
   P.light(0.95, 0.2, 34, 0x7dff9a, 14);
+  // Hull seams, a flag on the airlock and a whip antenna
+  domeRibs(P, 0, 0, 74, dh, 23, 0x8a7a5c, 0.3);
+  flag(P, 0.62, 0.3, 30, 0xff7a29, 39);
+  P.line(P.p(0.84, 0.06, 39), P.p(0.84, 0.06, 66), 0xc9d3e6, 1.5);
   if (ringsM.length) drawHalfLathe(P, 0, 0, ringsM, 0x8b8378, 7, 'front');
 };
 
@@ -314,6 +457,17 @@ const storage: Draw = (P, L, trim) => {
     P.box(u, v, 0.36, 0.36, 26, 0xc48a3a, 7 + z, 0xe0a85a);
     P.faceL(u, v, 0.36, 0.36, 0.1, 0.9, 7 + z + 11, 7 + z + 15, 0x7a5220);
   });
+  // Silo ladder, drums and a small cargo loader
+  const [sx, sy] = P.p(-0.5, -0.5, 7);
+  ladder(P, sx + 8, sy + 12, 60 + L * 8);
+  barrel(P, -0.32, 0.84, 0x3a6ea5);
+  barrel(P, -0.12, 0.84, 0xe63946);
+  P.box(0.8, -0.2, 0.2, 0.3, 9, 0xff8c2a, 10, 0xffb35c);
+  P.box(0.8, -0.3, 0.2, 0.08, 14, 0x2b3346, 10);
+  for (const dv of [-0.3, -0.1]) {
+    const [x, y] = P.p(0.9, dv, 10);
+    P.g.fillStyle(0x1b1f2b, 1).fillCircle(x, y, 4);
+  }
 };
 
 const builderStation: Draw = (P, L, trim) => {
@@ -343,6 +497,16 @@ const builderStation: Draw = (P, L, trim) => {
   P.g.fillStyle(0x7fe3ff, 1);
   P.g.fillCircle(x - 2.5, y - 1, 1.8);
   P.g.fillCircle(x + 2.5, y - 1, 1.8);
+  // Warning band over the bays, tool crates, spare wheels and a charging post
+  hazardL(P, -0.05, -0.05, 1.5, 1.35, 0.04, 0.96, 7 + h * 0.72, 7 + h * 0.72 + 5, 16);
+  crate(P, 0.3, 0.82, 7, 0x3a6ea5);
+  crate(P, 0.5, 0.82);
+  for (const dv of [0.1, 0.3]) {
+    const [wx, wy] = P.p(0.84, dv, 12);
+    P.g.fillStyle(0x1b1f2b, 1).fillEllipse(wx, wy, 13, 16);
+    P.g.fillStyle(0x8c95a6, 1).fillEllipse(wx, wy, 5, 6);
+  }
+  lamp(P, -0.66, 0.84, 24, 0x7fe3ff);
 };
 
 const lab: Draw = (P, L, trim) => {
@@ -369,6 +533,14 @@ const lab: Draw = (P, L, trim) => {
   if (L >= 4) {
     P.cylinder(-0.55, 0.55, 8, 30, 0x8c95a6, 33, 6);
     P.line(P.p(-0.55, 0.55, 63), P.p(-0.3, 0.3, 84), 0xc9d3e6, 6);
+  }
+  // Dome frame, a roof instrument and sample canisters by the door
+  domeRibs(P, 0, 0, 60, 42 + L * 5, 39, 0xffffff, 0.3);
+  P.box(0.58, 0.58, 0.16, 0.16, 10, 0xe8edf3, 33);
+  P.light(0.58, 0.58, 46, 0x7fe3ff, 12);
+  for (const [u, c] of [[0.1, 0x7fe3ff], [0.26, 0xff8a3d], [0.42, 0x7dff9a]] as const) {
+    P.cylinder(u, 0.85, 5, 12, 0xdfe7f2, 7, 7);
+    P.dome(u, 0.85, 5, 4, c, 19, 7);
   }
 };
 
@@ -399,8 +571,22 @@ const spaceport: Draw = (P, L, trim) => {
     P.g.fillCircle(x, y, 3);
     P.lights.push({ x: x - P.ox, y: y - P.oy, color: 0xff8a3d, r: 14 });
   }
-  // Gantry
-  P.box(-0.45, 0.75, 0.2, 0.2, 90 + L * 6, 0xe63946, 7);
+  // Gantry with cross bracing and a service arm
+  const gh = 90 + L * 6;
+  P.box(-0.45, 0.75, 0.2, 0.2, gh, 0xe63946, 7);
+  for (let zz = 12; zz < gh - 14; zz += 18) {
+    P.line(P.p(-0.55, 0.85, zz), P.p(-0.35, 0.85, zz + 14), 0xffffff, 1.5, 0.7);
+    P.line(P.p(-0.35, 0.85, zz), P.p(-0.55, 0.85, zz + 14), 0xffffff, 1.5, 0.7);
+  }
+  pipe(P, P.p(-0.4, 0.7, gh - 4), P.p(-0.1, 0.35, gh - 4), 0xe63946, 4);
+  // Fuel line, cargo containers and floodlights
+  pipe(P, P.p(0.95, -0.72, 12), P.p(0.6, -0.3, 19), 0xf2f5fa, 3);
+  P.box(-1.22, 1.12, 0.3, 0.2, 14, 0x3a6ea5, 7, 0x4f8ad0);
+  P.box(-0.98, 1.3, 0.3, 0.2, 14, 0xff8c2a, 7, 0xffb35c);
+  P.box(-1.1, 1.2, 0.3, 0.2, 12, 0x45c46a, 21, 0x7be08f);
+  lamp(P, 1.3, 0.55, 34, 0xffffff);
+  lamp(P, 0.55, 1.3, 34, 0xffffff);
+  crate(P, 1.28, 1.05, 7, 0xc48a3a, 0.2, 13);
 };
 
 /** Lunar Operations Center: control hall with screens; each level adds an antenna system. */
@@ -413,6 +599,13 @@ const opscenter: Draw = (P, L, trim) => {
   const [mx, my] = P.p(-0.55, -0.55, 7 + mh + 6);
   P.g.fillStyle(0xff4d4d, 1).fillCircle(mx, my, 4);
   P.lights.push({ x: mx - P.ox, y: my - P.oy, color: 0xff4d4d, r: 18 });
+  // Cable run from the mast, and cooling units beside the hall
+  P.line(P.p(-0.55, -0.55, 8), P.p(-0.55, 0.1, 8), 0x1b1f2b, 3, 0.85);
+  for (const v of [0.2, 0.5]) {
+    P.box(-0.8, v, 0.2, 0.22, 14, 0x8c95a6, 7, 0xaab3c4);
+    const [fx, fy] = P.p(-0.8, v, 21);
+    P.g.fillStyle(0x2b3346, 1).fillEllipse(fx, fy, 12, 6);
+  }
   // Control hall
   P.box(0.1, 0.1, 1.5, 1.3, 34, 0x24324f, 7, 0x2f4166);
   // Wall of screens on the left face
@@ -443,6 +636,12 @@ const opscenter: Draw = (P, L, trim) => {
     dish(-0.55, 0.0, 14, 30);
   }
   P.light(0.1, 0.75, 22, 0x7fe3ff, 40);
+  // Status board by the entrance and a marker light
+  P.line(P.p(0.5, 0.88, 7), P.p(0.5, 0.88, 20), 0x8c95a6, 2);
+  P.box(0.5, 0.88, 0.3, 0.04, 12, 0x1b2238, 20);
+  P.faceL(0.5, 0.88, 0.3, 0.04, 0.1, 0.9, 22, 30, 0x7fe3ff);
+  P.light(0.5, 0.9, 26, 0x7fe3ff, 14);
+  lamp(P, -0.5, 0.86, 20, 0x3fdc7c);
 };
 
 /** Lunar Monitoring Station: instrument mast with sensor head; each level adds instruments. */
@@ -462,6 +661,9 @@ const monitor: Draw = (P, L, trim) => {
   P.dome(0.1, 0.12, 7, 8, 0x7fe3ff, 25 + h + 12, 8);
   const [hx, hy] = P.p(0.1, 0.12, 25 + h + 16);
   P.lights.push({ x: hx - P.ox, y: hy - P.oy, color: 0x7fe3ff, r: 20 });
+  // Guy wires hold the mast, with a little rock for scale
+  for (const [u, v] of [[-0.36, 0.36], [0.38, 0.38], [0.38, -0.34]] as const) P.line(P.p(0.1, 0.12, 25 + h * 0.8), P.p(u, v, 7), 0xc9d3e6, 1, 0.6);
+  rock(P, -0.28, 0.3, 5);
   // Level 2: radiation detector boom; 3: thermometer probe; 4: second antenna
   if (L >= 2) {
     P.line(P.p(0.1, 0.12, 25 + h * 0.6), P.p(0.4, -0.1, 25 + h * 0.6), 0x9aa5b8, 2);

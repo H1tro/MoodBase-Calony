@@ -4,7 +4,8 @@ import { MAP_SIZE } from '../config/balance';
 import { store } from '../store';
 import { getTerrain } from '../systems/terrain';
 import { buildingAt, cyclePos, dayLength, isDay } from '../systems/selectors';
-import { drawRidges, drawTerrain, groundOutline, LANDER_TILE, ROVER_LOOP } from '../art/drawTerrain';
+import { drawGlobe, drawLimb, drawRidges, drawTerrain, globeCircle, groundOutline, LANDER_TILE, ROVER_LOOP } from '../art/drawTerrain';
+import { skinOf } from '../config/skins';
 import { TEX, texKey } from '../art/drawBuildings';
 import { footprintCenter, HH, HW, mix, tileTop, WORLD_H, WORLD_W, worldToTile } from '../art/iso';
 import { BuildingView } from '../entities/BuildingView';
@@ -83,14 +84,26 @@ export class MoonScene extends Phaser.Scene {
     this.reportReady = true;
     const s = store.state;
     const terrain = getTerrain(s.seed, s.difficulty);
-    drawRidges(this.add.graphics().setDepth(-1), s.seed);
-    drawTerrain(this.add.graphics().setDepth(0), terrain, s.seed);
+    const skin = skinOf(store.profile.settings.skin);
+    const globe = store.profile.settings.mapShape !== 'flat';
+    const ground = this.add.graphics().setDepth(0);
+    const maskG = this.make.graphics({}, false);
+    if (globe) {
+      // The base stands on a curved world: the ground is clipped to the globe and shaded toward the horizon.
+      const o = globeCircle();
+      drawGlobe(this.add.graphics().setDepth(-1), s.seed, skin);
+      maskG.fillStyle(0xffffff).fillCircle(o.x, o.y, o.r);
+      ground.setMask(maskG.createGeometryMask());
+      drawLimb(this.add.graphics().setDepth(0.6));
+    } else {
+      drawRidges(this.add.graphics().setDepth(-1), s.seed, skin);
+      maskG.fillStyle(0xffffff).fillPoints(groundOutline(), true);
+    }
+    drawTerrain(ground, terrain, s.seed, skin, globe);
 
     // Fine regolith grain over the ground only.
     const low = store.profile.settings.graphics === 'low';
     this.lowGfx = low;
-    const maskG = this.make.graphics({}, false);
-    maskG.fillStyle(0xffffff).fillPoints(groundOutline(), true);
     if (!low) this.add.tileSprite(0, 0, WORLD_W, WORLD_H, 'grain').setOrigin(0).setTileScale(1, 0.55)
       .setBlendMode(Phaser.BlendModes.MULTIPLY).setAlpha(0.85).setDepth(0.5).setMask(maskG.createGeometryMask());
 
@@ -101,7 +114,7 @@ export class MoonScene extends Phaser.Scene {
       if (k === 'ice') this.iceSpots.push(tileTop(x + 0.5, y + 0.5));
       if (k !== 'boulder') return;
       const p = tileTop(x, y);
-      const img = this.add.image(p.x, p.y + HH + 14, `boulder_${(x * 7 + y) % 3}`).setOrigin(0.5, 80 / 110).setScale(0.75).setDepth(p.y + 2 * HH);
+      const img = this.add.image(p.x, p.y + HH + 14, `boulder_${(x * 7 + y) % 3}`).setOrigin(0.5, 80 / 110).setScale(0.75).setDepth(p.y + 2 * HH).setTint(skin.prop);
       this.addPropShadow(img);
     });
 

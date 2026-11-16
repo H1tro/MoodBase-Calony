@@ -3,9 +3,10 @@ import { MAP_SIZE } from '../config/balance';
 import type { Terrain, TileKind } from '../systems/terrain';
 import { BORDER, HH, HW, mix, shade, tileTop } from './iso';
 import { makeRng } from '../../utils/rng';
+import { toneFor, type Skin } from '../config/skins';
 
 /** Rover patrol loop in tile coordinates, just outside the buildable map. */
-export const ROVER_LOOP: [number, number][] = [[-2.2, -2.2], [MAP_SIZE + 1.8, -2.2], [MAP_SIZE + 1.8, MAP_SIZE + 1.8], [-2.2, MAP_SIZE + 1.8]];
+export const ROVER_LOOP: [number, number][] = [[-1.2, -1.2], [MAP_SIZE + 0.8, -1.2], [MAP_SIZE + 0.8, MAP_SIZE + 0.8], [-1.2, MAP_SIZE + 0.8]];
 
 /** The first landing site, left on the plain west of the base. */
 export const LANDER_TILE = { x: -3.2, y: 11.5 };
@@ -17,6 +18,65 @@ const BASE: Record<TileKind, number> = {
   ice: 0xa7d8f2,
   ore: 0xa8775c,
 };
+
+/** Make a Graphics object draw its grey palette in the colours of a skin. */
+function skinned(g: Phaser.GameObjects.Graphics, skin: Skin) {
+  const tone = toneFor(skin);
+  const fill = g.fillStyle.bind(g);
+  const line = g.lineStyle.bind(g);
+  g.fillStyle = (c: number, a?: number) => fill(tone(c), a);
+  g.lineStyle = (w: number, c?: number, a?: number) => line(w, tone(c ?? 0), a);
+  return g;
+}
+
+/**
+ * The globe the base stands on: a circle that touches the far edge of the ground,
+ * so the horizon is a curve. All of the playable map lies inside it.
+ */
+export function globeCircle() {
+  const c = tileTop(MAP_SIZE / 2, MAP_SIZE / 2);
+  const ry = 16.5 * HH * 1.414;
+  return { x: c.x, y: c.y + ry * 1.5, r: ry * 2.5 };
+}
+
+/** The body of the globe (under the terrain) and the glow of its atmosphere, where it has one. */
+export function drawGlobe(g: Phaser.GameObjects.Graphics, seed: number, skin: Skin) {
+  const rng = makeRng(seed + 31);
+  const o = globeCircle();
+  if (skin.haze !== null) {
+    for (let k = 9; k >= 1; k--) {
+      g.lineStyle(14, skin.haze, 0.05 + 0.035 * (9 - k));
+      g.strokeCircle(o.x, o.y, o.r + k * 11);
+    }
+  }
+  skinned(g, skin);
+  g.fillStyle(0x6c707b, 1);
+  g.fillCircle(o.x, o.y, o.r);
+  // Soft patches so the ground beyond the base is not a flat colour.
+  for (let i = 0; i < 170; i++) {
+    const a = rng() * Math.PI * 2;
+    const d = Math.sqrt(rng()) * o.r * 0.97;
+    const s = 60 + rng() * 240;
+    g.fillStyle(rng() < 0.5 ? 0x767a85 : 0x62666f, 0.25 + rng() * 0.3);
+    g.fillEllipse(o.x + Math.cos(a) * d, o.y + Math.sin(a) * d, s * 2, s);
+  }
+}
+
+/** Shading that makes the ground fall away toward the horizon, drawn over the terrain. */
+export function drawLimb(g: Phaser.GameObjects.Graphics) {
+  const o = globeCircle();
+  const steps = 26;
+  for (let i = 0; i < steps; i++) {
+    const k = 1 - i / steps;
+    g.lineStyle(17, 0x02040a, 0.5 * k * k);
+    g.strokeCircle(o.x, o.y, o.r - 8 - i * 15);
+  }
+  // A thin bright line where sunlight grazes the horizon.
+  g.lineStyle(3, 0xffffff, 0.22);
+  g.beginPath();
+  g.arc(o.x, o.y, o.r - 2, Math.PI * 1.08, Math.PI * 1.92);
+  g.strokePath();
+}
 
 function diamond(g: Phaser.GameObjects.Graphics, x: number, y: number, w = HW, h = HH) {
   g.beginPath();
@@ -67,7 +127,8 @@ export function groundOutline() {
  * Jagged mountain ridges along the far edges, so the plateau reads as a
  * horizon instead of a floating island. Two layers: far (dark) and near.
  */
-export function drawRidges(g: Phaser.GameObjects.Graphics, seed: number) {
+export function drawRidges(g: Phaser.GameObjects.Graphics, seed: number, skin: Skin) {
+  skinned(g, skin);
   const rng = makeRng(seed + 7);
   const lo = -BORDER;
   const hi = MAP_SIZE + BORDER;
@@ -109,19 +170,23 @@ export function drawRidges(g: Phaser.GameObjects.Graphics, seed: number) {
 }
 
 /** Draw the whole lunar surface into one Graphics object (static). */
-export function drawTerrain(g: Phaser.GameObjects.Graphics, t: Terrain, seed: number) {
+export function drawTerrain(g: Phaser.GameObjects.Graphics, t: Terrain, seed: number, skin: Skin, globe: boolean) {
   const rng = makeRng(seed + 99);
   const lo = -BORDER;
   const hi = MAP_SIZE + BORDER;
+  skinned(g, skin);
+  const base = { ...BASE, ore: skin.ore };
 
-  // Cliff skirt under the outer ground so the plateau has thickness.
+  // Cliff skirt under the outer ground so the plateau has thickness (the globe has no cliff).
   const L = tileTop(lo, hi);
   const B = tileTop(hi, hi);
   const R = tileTop(hi, lo);
-  g.fillStyle(0x2e313a, 1);
-  g.fillPoints([{ x: L.x, y: L.y }, { x: B.x, y: B.y }, { x: B.x, y: B.y + 90 }, { x: L.x, y: L.y + 90 }], true);
-  g.fillStyle(0x23262e, 1);
-  g.fillPoints([{ x: B.x, y: B.y }, { x: R.x, y: R.y }, { x: R.x, y: R.y + 90 }, { x: B.x, y: B.y + 90 }], true);
+  if (!globe) {
+    g.fillStyle(0x2e313a, 1);
+    g.fillPoints([{ x: L.x, y: L.y }, { x: B.x, y: B.y }, { x: B.x, y: B.y + 90 }, { x: L.x, y: L.y + 90 }], true);
+    g.fillStyle(0x23262e, 1);
+    g.fillPoints([{ x: B.x, y: B.y }, { x: R.x, y: R.y }, { x: R.x, y: R.y + 90 }, { x: B.x, y: B.y + 90 }], true);
+  }
 
   // Outer ground tiles (not buildable), slightly darker.
   for (let y = lo; y < hi; y++)
@@ -140,7 +205,8 @@ export function drawTerrain(g: Phaser.GameObjects.Graphics, t: Terrain, seed: nu
       const kind = t.tiles[y * MAP_SIZE + x];
       const p = tileTop(x, y);
       const warm = 0.5 + 0.5 * Math.sin(x * 0.45 + 1) * Math.cos(y * 0.38);
-      let c = mix(BASE[kind], kind === 'ground' || kind === 'boulder' ? 0x9a948a : BASE[kind], warm * 0.6);
+      let c = mix(base[kind], kind === 'ground' || kind === 'boulder' ? 0x9a948a : base[kind], warm * 0.6);
+      if (kind !== 'ice' && kind !== 'ore') c = toneFor(skin)(c);
       c = shade(c, 0.93 + rng() * 0.12);
       g.fillStyle(c, 1);
       diamond(g, p.x, p.y);
@@ -161,7 +227,7 @@ export function drawTerrain(g: Phaser.GameObjects.Graphics, t: Terrain, seed: nu
         g.fillEllipse(p.x + (rng() - 0.5) * 30, p.y + HH, 40, 14);
       } else if (kind === 'ore') {
         for (let i = 0; i < 6; i++) {
-          g.fillStyle(rng() < 0.5 ? 0x7a4a33 : 0xd09a6a, 0.9);
+          g.fillStyle(rng() < 0.5 ? shade(skin.ore, 0.7) : shade(skin.ore, 1.35), 0.9);
           g.fillCircle(p.x + (rng() - 0.5) * HW, p.y + HH + (rng() - 0.5) * HH * 0.9, 2 + rng() * 3);
         }
       }
