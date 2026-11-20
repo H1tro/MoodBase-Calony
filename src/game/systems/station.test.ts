@@ -9,6 +9,7 @@ import { flareIntensity, setSpaceWeather, strongestFlare } from './spaceWeather'
 import { queueQuiz } from './quiz';
 import { deserialize, serialize } from './save';
 import { startRepair } from './construction';
+import { offlineReason, updatePower } from './power';
 import { LIFE } from '../config/station';
 import { DAY_NIGHT } from '../config/balance';
 import { QUIZ_REWARD } from '../config/quiz';
@@ -256,5 +257,36 @@ describe('real data, quiz, report, saves', () => {
     expect(s.station.effects).toEqual([]);
     tick(s, 1);
     expect(Number.isFinite(s.flows.co2ppm)).toBe(true);
+  });
+});
+
+describe('offline reasons', () => {
+  it('names emergency mode, broken equipment and a real shortage separately', () => {
+    const s = colony();
+    s.battery = 500;
+    const mine = add(s, 'mine');
+    updatePower(s, 0.25);
+    expect(offlineReason(s, mine)).toBeNull();
+
+    s.station.emergency = true;
+    updatePower(s, 0.25);
+    expect(mine.online).toBe(false);
+    expect(offlineReason(s, mine)).toBe('emergency');
+    s.station.emergency = false;
+
+    mine.condition = 0;
+    updatePower(s, 0.25);
+    expect(offlineReason(s, mine)).toBe('broken');
+    mine.condition = 100;
+
+    mine.enabled = false;
+    updatePower(s, 0.25);
+    expect(offlineReason(s, mine)).toBe('off');
+    mine.enabled = true;
+
+    s.battery = 0;
+    s.time = DAY_NIGHT.cycle - 1; // night: no solar
+    updatePower(s, 0.25);
+    expect(offlineReason(s, mine)).toBe('power');
   });
 });

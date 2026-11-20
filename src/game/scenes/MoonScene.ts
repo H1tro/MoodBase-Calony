@@ -13,6 +13,7 @@ import { BuilderBot } from '../entities/BuilderBot';
 import { Astronaut } from '../entities/Astronaut';
 import { Rover } from '../entities/Rover';
 import { networkStatus, opsCenter } from '../systems/monitoring';
+import { OFFLINE_TEXT, offlineReason } from '../systems/power';
 
 const DRAG_THRESHOLD = 8;
 const MIN_ZOOM = 0.35;
@@ -280,8 +281,7 @@ export class MoonScene extends Phaser.Scene {
     const def = BUILDINGS[b.type];
     const status = b.level === 0 ? '🔨 under construction'
       : b.job ? '🔨 upgrading'
-      : !b.enabled ? '⏸ switched off'
-      : def.power > 0 && !b.online ? '⚡ NO POWER'
+      : offlineReason(store.state, b) ? `${offlineReason(store.state, b) === 'power' ? '⚡' : '⏸'} ${OFFLINE_TEXT[offlineReason(store.state, b)!]}`
       : '● online';
     this.tipTitle.setText(`${def.icon} ${def.name}${b.level > 0 ? `  Lv ${b.level}` : ''}`);
     this.tipSub.setText(`${status} · click for details`);

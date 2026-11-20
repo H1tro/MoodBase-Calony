@@ -28,6 +28,26 @@ function stormSafed(s: GameState, b: Building): boolean {
   return hasEffect(s, 'electronicsOff') && (b.type === 'lab' || b.type === 'monitor');
 }
 
+export type OfflineReason = 'off' | 'emergency' | 'storm' | 'broken' | 'power';
+
+/** Why a building is not running right now (null when it is running or draws no power). */
+export function offlineReason(s: GameState, b: Building): OfflineReason | null {
+  if (b.level === 0 || b.online) return null;
+  if (!b.enabled) return 'off';
+  if (emergencyOff(s, b)) return 'emergency';
+  if (stormSafed(s, b)) return 'storm';
+  if (conditionFactor(b.condition) <= 0) return 'broken';
+  return BUILDINGS[b.type].power > 0 ? 'power' : null;
+}
+
+export const OFFLINE_TEXT: Record<OfflineReason, string> = {
+  off: 'Switched off',
+  emergency: 'Off: emergency power mode',
+  storm: 'Off: safed for solar storm',
+  broken: 'Broken: needs repair',
+  power: 'NO POWER: not enough energy',
+};
+
 /**
  * Power model: solar output + battery charge is shared among consumers in
  * priority order (life support first). When energy runs out, the lowest

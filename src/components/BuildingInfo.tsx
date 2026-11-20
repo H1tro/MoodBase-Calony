@@ -4,7 +4,7 @@ import { OpsCenterSummary, StationLinkControls } from './NetworkControls';
 import { REAL_WORLD } from '../game/config/realworld';
 import { ENVIRONMENT, MAINTENANCE } from '../game/config/station';
 import { canClean, canMove, canRepair } from '../game/systems/construction';
-import { solarFarmEfficiency } from '../game/systems/power';
+import { OFFLINE_TEXT, offlineReason, solarFarmEfficiency } from '../game/systems/power';
 import { Bar } from './ui';
 import { RADIATION } from '../game/config/balance';
 import { texKey } from '../game/art/drawBuildings';
@@ -27,9 +27,9 @@ export default function BuildingInfo() {
   const now = statsFor(s, b.type, b.level);
   const after = next <= MAX_LEVEL ? statsFor(s, b.type, next) : [];
   const draw = b.level > 0 ? powerDraw(b.type, b.level) : 0;
+  const why = offlineReason(s, b);
   const status = b.level === 0 ? { t: 'Under construction', c: 'text-warn' }
-    : !b.enabled ? { t: 'Switched off', c: 'text-white/60' }
-    : def.power > 0 && !b.online ? { t: 'NO POWER — offline', c: 'text-bad' }
+    : why ? { t: OFFLINE_TEXT[why], c: why === 'off' ? 'text-white/60' : why === 'power' || why === 'broken' ? 'text-bad' : 'text-warn' }
     : { t: 'Online', c: 'text-good' };
 
   return (
@@ -45,6 +45,11 @@ export default function BuildingInfo() {
                   <span className="chip bg-accent/20 text-accent">Level {b.level}/{MAX_LEVEL}</span>
                   {'★'.repeat(b.level) && <span className="text-accent">{'★'.repeat(b.level)}<span className="text-white/20">{'★'.repeat(MAX_LEVEL - b.level)}</span></span>}
                   <span className={`chip font-bold ${status.c}`}>{status.t}</span>
+                  {why === 'emergency' && (
+                    <button className="btn btn-green px-2 py-0.5 text-xs" onClick={() => store.toggleEmergency()} title="Emergency mode keeps only life support running. Turn it off to power everything again.">
+                      ⚡ Restore normal power
+                    </button>
+                  )}
                   {draw > 0 && <span className="chip">⚡ {draw.toFixed(1)} kW</span>}
                   {b.type === 'habitat' && <span className="chip">🛡 Shield {b.shield}/{RADIATION.maxShield}</span>}
                   {b.type === 'mine' && oreTiles(s, b) >= 2 && <span className="chip text-[#ffb98a]">Ore bonus +50%</span>}
